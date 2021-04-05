@@ -1,0 +1,4 @@
+DUDAS DE LA PRACTICA
+ - ¿Son carne, pescado, huevos, etc. un solo grupo?
+ - Clase platos -> Grupo predominante. ==> Entendemos que el grupo
+                    predominante aquel grupo con mayor numero de repeticiones.
