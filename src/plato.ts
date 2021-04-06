@@ -2,21 +2,27 @@ import { Alimento } from "./alimento";
 import { Macronutrientes } from "./alimento"
 import { Grupo } from "./alimento";
 
-export type Categorias = 'ENTRANTE' | 'PRIMERO' | 'SEGUNDO' | 'POSTRE';
+/**
+ * Tipo de datos Categoria. Existen 4 categorías posibles: Entrante, 
+ * primer plato, segundo plato o postre
+ */
+export type Categoria = 'ENTRANTE' | 'PRIMERO' | 'SEGUNDO' | 'POSTRE';
 
 /*
  * Esta es la clase Plato.
  */
 export class Plato {
   /**
-   * @param nombre Nombre del plato
-   * @param alimentos Array de pares [alimento, cantidad (en gramos)]
+   * @param nombrePlato Nombre del plato.
+   * @param alimentos Array de pares [alimento, cantidad (en gramos)].
+   * @param categoria Categoría a la que pertenece el plato.
    */
   private precio: number = 0;
   private macronutrientes_plato: Macronutrientes;
   constructor(private nombrePlato: string, private alimentos: [Alimento, number][],
-    private categorias: Categorias) {
+    private categoria: Categoria) {
       this.macronutrientes_plato = this.calculoMacronutrientes();
+      this.precio = this.calculoPrecio();
   }
 
   /**
@@ -39,32 +45,29 @@ export class Plato {
    * Obtiene el nombre de la categoría del plato.
    * @returns Nombre de la categoría del plato.
    */
-  getCategorias() {
-    return this.categorias;
+  getCategoria() {
+    return this.categoria;
   }
 
   /**
-   * Obtiene los macronutrientes en conjunto del plato
-   * @returns Cantidad de macronutrientes del plato
+   * Obtiene los macronutrientes en conjunto del plato.
+   * @returns Cantidad de macronutrientes del plato.
    */
-   getMacronutrientesPlato() {
+  getMacronutrientesPlato() {
     return this.macronutrientes_plato;
   }
 
   /**
-   * Obtiene el precio del plato en función a los ingredientes
-   * utilizados y su cantidad.
-   * @returns Precio del plato
+   * Obtiene el precio del plato en función a los ingredientes utilizados y su cantidad.
+   * @returns Precio del plato.
    */
-   getPrecio() {
+  getPrecio() {
     return this.precio;
   }
 
   /**
-   * Realiza el cálculo de los macronutrientes del
-   * plato en base a la cantidad de cada alimento.
-   * 
-   * @returns Macronutrientes del plato
+   * Realiza el cálculo de los macronutrientes del plato en base a la cantidad de cada alimento.
+   * @returns Macronutrientes del plato.
    */
   calculoMacronutrientes() {
     let resultado: Macronutrientes = {carbohidratos: 0, proteinas: 0, lipidos: 0};
@@ -78,9 +81,8 @@ export class Plato {
   }
 
   /**
-   * Realiza el cálculo del precio en función a la 
-   * cantidad utilizada de cada alimento.
-   * @return Precio (Euros)
+   * Realiza el cálculo del precio en función a la cantidad utilizada de cada alimento.
+   * @return Precio (Euros).
    */ 
   calculoPrecio(): number {
     let sumatorio: number = 0;
@@ -93,8 +95,9 @@ export class Plato {
   }
 
   /**
-   * CARNES, PESCADOS, HUEVOS, TOFU, FRUTOS_SECOS, SEMILLAS, LEGUMBRES,
-                   VERDURAS, HORTALIZAS, LACTEOS, CEREALES, FRUTAS};
+   * Calcula el grupo de alimento predominante, es decir, al grupo de alimentos que 
+   * más aparece entre los ingredientes del plato
+   * @return El grupo más repetido.
    */
   calculoGrupoPredominante() {
     this.alimentos.forEach((elemento) => {
@@ -103,83 +106,69 @@ export class Plato {
       switch (grupo) {
         case 'CARNES':
           contadorAlimentos[0]++;
-          if (contadorAlimentos[0] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[0] >= this.alimentos.length / 2)
             return 'CARNES';
-          }
           break;
         case 'PESCADOS':
           contadorAlimentos[1]++;
-          if (contadorAlimentos[1] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[1] >= this.alimentos.length / 2)
             return 'PESCADOS';
-          }
           break;
         case 'HUEVOS':
           contadorAlimentos[2]++;
-          if (contadorAlimentos[2] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[2] >= this.alimentos.length / 2)
             return 'HUEVOS';
-          }
           break;
         case 'TOFU':
           contadorAlimentos[3]++;
-          if (contadorAlimentos[3] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[3] >= this.alimentos.length / 2)
             return 'TOFU';
-          }
           break;
         case 'FRUTOS_SECOS':
           contadorAlimentos[4]++;
-          if (contadorAlimentos[4] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[4] >= this.alimentos.length / 2)
             return 'FRUTOS_SECOS';
-          }
           break;
         case 'SEMILLAS':
           contadorAlimentos[5]++;
-          if (contadorAlimentos[5] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[5] >= this.alimentos.length / 2)
             return 'SEMILLAS';
-          }
           break;
         case 'LEGUMBRES':
           contadorAlimentos[6]++;
-          if (contadorAlimentos[6] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[6] >= this.alimentos.length / 2)
             return 'LEGUMBRES';
-          }
           break;
         case 'VERDURAS':
           contadorAlimentos[7]++;
-          if (contadorAlimentos[7] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[7] >= this.alimentos.length / 2)
             return 'VERDURAS';
-          }
           break;
         case 'HORTALIZAS':
           contadorAlimentos[8]++;
-          if (contadorAlimentos[8] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[8] >= this.alimentos.length / 2)
             return 'HORTALIZAS';
-          }
           break;
         case 'LACTEOS':
           contadorAlimentos[9]++;
-          if (contadorAlimentos[9] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[9] >= this.alimentos.length / 2)
             return 'LACTEOS';
-          }
           break;
         case 'CEREALES':
           contadorAlimentos[10]++;
-          if (contadorAlimentos[10] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[10] >= this.alimentos.length / 2)
             return 'CEREALES';
-          }
           break;
         case 'FRUTAS':
           contadorAlimentos[11]++;
-          if (contadorAlimentos[11] >= this.alimentos.length / 2) {
+          if (contadorAlimentos[11] >= this.alimentos.length / 2)
             return 'FRUTAS';
-          }
           break;
         default:
           throw new Error("Error al calcular el grupo predominante.");
           break;
       }
-      // const MayorValor = Math.max.apply(Math, contadorAlimentos.map(function(o) { return o.y; }));
-      // const MayorElemento = MayorValor.find();
-      return 'Carnes';
+      return 'MIX';
     });
   }
 }

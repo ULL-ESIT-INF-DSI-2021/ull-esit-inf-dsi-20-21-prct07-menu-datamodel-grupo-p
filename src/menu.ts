@@ -1,17 +1,19 @@
 import { Alimento } from "./alimento";
 import { Macronutrientes } from "./alimento"
 import { Grupo } from "./alimento";
-import { GrupoType } from "./alimento";
 import { Plato } from "./plato";
-import { Categorias } from "./plato";
-
+import { Categoria } from "./plato";
 
 /*
  * Esta es la clase Menu.
  */
 export class Menu {
   /**
-   * @param nombre Nombre del plato
+   * Constructor de la clase Menu. Comprueba que existan al menos 3 platos de 3 categorías 
+   * distintas (Entrante, Primero, Segundo y Postre) en cada Menú. Si no los hay, devuelve un error.
+   * @param nombreMenu Nombre del plato en cuestión.
+   * @param primerPlato Primer plato del menú
+   * @param demasPlatos Array donde se almacenan el resto de los platos del menú.
    */
   private precio: number = 0;
   private arrayPlatos: Plato[] = [];
@@ -21,11 +23,25 @@ export class Menu {
       this.arrayPlatos.push(element);
     });
 
-    let counts: Categorias[] = [];
+    let existeEntrante: number = 0;
+    let existePrimero: number = 0;
+    let existeSegundo: number = 0;
+    let existePostre: number = 0;
+    let grupoElemento: Categoria;
     this.arrayPlatos.forEach((elemento) => {
-      //counts[elemento.getCategorias()] = 1 + (counts[elemento.getCategorias()] || 0);
+      grupoElemento = elemento.getCategoria();
+      if (grupoElemento === 'ENTRANTE') {
+        existeEntrante = 1;
+      } else if (grupoElemento === 'PRIMERO') {
+        existePrimero = 1;
+      } else if (grupoElemento === 'SEGUNDO') {
+        existeSegundo = 1;
+      } else if (grupoElemento === 'POSTRE') {
+        existePostre = 1;
+      }
     });
-    if (counts.length < 3) {
+    const counts = existeEntrante + existePrimero + existeSegundo + existePostre;
+    if (counts < 3) {
       throw new Error("Los menús deben tener 3 categorías de platos como mínimo.");
     }
   }
@@ -47,30 +63,38 @@ export class Menu {
   }
 
   /**
-   * Obtiene la composición nutricional del menú
-   * @returns Nombre del alimento.
+   * Obtiene la composición nutricional del menú, obteníendola plato por plato.
+   * @returns Cantidad total de carbohidratos, proteínas y lípidos del menú.
    */
   getComposicionNutricional() {
-    return this;
-    
+    let composicionNutricional: Macronutrientes = {carbohidratos: 0, proteinas: 0, lipidos: 0};
+    this.arrayPlatos.forEach((elemento) => {
+      composicionNutricional.carbohidratos += elemento.calculoMacronutrientes().carbohidratos;
+      composicionNutricional.proteinas += elemento.calculoMacronutrientes().proteinas;
+      composicionNutricional.lipidos += elemento.calculoMacronutrientes().lipidos;
+    });
+    return composicionNutricional;
   }
   
   /**
-   * Obtiene los grupos de alimentos que componen el menú.
-   * @returns Listado de grupos de alimentos.
+   * Obtiene los grupos de alimentos que componen el menú. Almacena todos los grupos de 
+   * todos los alimentos de todos los platos y al final filtrar para tener una copia de
+   * cada. Este listado final de grupos únicos es lo que devuelve.
+   * @returns Listado de grupos de alimentos (únicos) de todo el menú.
    */
-  getGruposAlimentos() {
-    let arrayGruposAlimentos: GrupoType[] = [];
+  getGruposAlimentos(): Grupo[] {
+    let arrayGruposAlimentos: Grupo[] = [];
     let platosGrupo: [Alimento, number][] = [];
-    let valorGrupo: GrupoType;
-    this.arrayPlatos.forEach((plato) => {
-      platosGrupo = plato.getAlimentos();
-      platosGrupo.forEach((alimento) => {
-        valorGrupo = alimento[0].getGrupo();
+    //let valorGrupo: any;
+    this.arrayPlatos.forEach((cadaPlato) => {
+      cadaPlato.getAlimentos().forEach((cadaAlimento) => {
+        arrayGruposAlimentos.push(cadaAlimento[0].getGrupo());
+        //valorGrupo = alimento[0].getGrupo();
         //arrayGruposAlimentos[valorGrupo] = 1 + (arrayGruposAlimentos[valorGrupo] || 0)
       });;
-      // arrayGruposAlimentos[element)] = 1 + (arrayGruposAlimentos[element.calculoGrupoPredominante()] || 0);
     });
+    const arrayFinal: Grupo[] = arrayGruposAlimentos.filter((n, i) => arrayGruposAlimentos.indexOf(n) === i);
+    return arrayFinal;
   }
   
   /**
@@ -85,3 +109,11 @@ export class Menu {
     return precioTotal;
   }
 }
+
+/*
+const Quesillo = new Plato();
+const PapasConMojo = new Plato();
+const CarneFiesta = new Plato('Carne Fiesta', );
+const MenuCasaEugenio = new Menu('Menú del día', PapasConMojo, CarneFiesta, Quesillo);
+console.log(MenuCasaEugenio.getGruposAlimentos());
+*/
