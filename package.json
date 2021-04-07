@@ -1,0 +1,33 @@
+{
+  "name": "practica7",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "mocha",
+    "coverage": "nyc npm test",
+    "start": "tsc-watch --onSuccess \"node dist/menu.js\"",
+    "doc": "typedoc"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/chai": "^4.2.15",
+    "@types/inquirer": "^7.3.1",
+    "@types/lowdb": "^1.0.9",
+    "@types/mocha": "^8.2.1",
+    "chai": "^4.3.3",
+    "coveralls": "^3.1.0",
+    "inquirer": "^8.0.0",
+    "lowdb": "^1.0.0",
+    "mocha": "^8.3.1",
+    "nyc": "^15.1.0",
+    "ts-node": "^9.1.1",
+    "tsc-watch": "^4.2.9",
+    "typedoc": "^0.20.30"
+  },
+  "dependencies": {
+    "inqu": "^0.1.0"
+  }
+}
