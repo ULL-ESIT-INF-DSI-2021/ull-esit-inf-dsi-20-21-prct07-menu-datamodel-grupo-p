@@ -14,7 +14,7 @@ export type Macronutrientes = {
  * Tipo de datos Grupo. Es el grupo de alimentos al que pertenece el alimento.
  */
 export type Grupo = 'CARNES' | 'PESCADOS' | 'HUEVOS' | 'TOFU' | 'FRUTOS_SECOS' | 'SEMILLAS' | 'LEGUMBRES' |
-'VERDURAS' | 'HORTALIZAS' | 'LACTEOS' | 'CEREALES' | 'FRUTAS';
+'VERDURAS' | 'HORTALIZAS' | 'LACTEOS' | 'CEREALES' | 'FRUTAS' | 'PROCESADOS';
 
 /**
  * Esta es la clase Alimento.

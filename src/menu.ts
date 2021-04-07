@@ -109,11 +109,3 @@ export class Menu {
     return precioTotal;
   }
 }
-
-/*
-const Quesillo = new Plato();
-const PapasConMojo = new Plato();
-const CarneFiesta = new Plato('Carne Fiesta', );
-const MenuCasaEugenio = new Menu('Menú del día', PapasConMojo, CarneFiesta, Quesillo);
-console.log(MenuCasaEugenio.getGruposAlimentos());
-*/

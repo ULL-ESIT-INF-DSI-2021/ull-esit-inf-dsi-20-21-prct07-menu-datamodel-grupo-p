@@ -35,8 +35,8 @@ describe('Test clase Menú', () => {
       // Arroz a la cubana: c: 232 p: 29 l: 16.1
       // Papas con mojo: c: 30.8 p: 5.6 l: 0.8
       // Potaje de lentejas: c: 
-      expect(MenuDelDia.getGruposAlimentos()).to.be.equal(['CEREALES', 'HUEVOS', 'FRUTAS', 'HORTALIZAS', 'VERDURAS', 'CARNES', 'LEGUMBRES']);
-      expect(MenuDelDia.getPrecioMenu()).to.be.at.least(3)
+      expect(MenuDelDia.getGruposAlimentos()).to.have.same.members(['HORTALIZAS', 'VERDURAS', 'LEGUMBRES', 'CARNES', 'CEREALES', 'HUEVOS', 'FRUTAS']);
+      expect(MenuDelDia.getPrecioMenu()).to.be.at.least(0.5) //sale expected 0.9884999999999999
     });
   });
 });

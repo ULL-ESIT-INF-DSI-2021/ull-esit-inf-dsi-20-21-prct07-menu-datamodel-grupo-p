@@ -164,6 +164,11 @@ export class Plato {
           if (contadorAlimentos[11] >= this.alimentos.length / 2)
             return 'FRUTAS';
           break;
+        case 'PROCESADOS':
+          contadorAlimentos[12]++;
+          if (contadorAlimentos[12] >= this.alimentos.length / 2)
+            return 'PROCESADOS';
+          break;
         default:
           throw new Error("Error al calcular el grupo predominante.");
           break;

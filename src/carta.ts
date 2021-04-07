@@ -77,7 +77,7 @@ export class Carta {
   searchMenu(nombreMenu: string): Menu[] {
     const arrayMatchedMenu: Menu[] = [];
     this.arrayMenu.forEach((element) => {
-      if (element.getNombreMenu() === nombreMenu) {
+      if (element.getNombreMenu().search(nombreMenu) > -1) {
         arrayMatchedMenu.push(element);
       }
     });
@@ -91,14 +91,14 @@ export class Carta {
    */
   searchPlato(nombrePlato: string): Plato[] {
     const arrayMatchedPlatos: Plato[] = [];
-    this.arrayPlatosSueltos.forEach((element) => {
-      if (element.getNombrePlato() === nombrePlato) {
-        arrayMatchedPlatos.push(element);
+    this.arrayPlatosSueltos.forEach((platoSuelto) => {
+      if (platoSuelto.getNombrePlato().search(nombrePlato) > -1) {
+        arrayMatchedPlatos.push(platoSuelto);
       }
     });
     this.arrayMenu.forEach((cadaMenu) => {
       cadaMenu.getPlatos().forEach((platoDelMenu) => {
-        if (platoDelMenu.getNombrePlato() === nombrePlato) {
+        if (platoDelMenu.getNombrePlato().search(nombrePlato) > -1) {
           arrayMatchedPlatos.push(platoDelMenu);
         }
       });
