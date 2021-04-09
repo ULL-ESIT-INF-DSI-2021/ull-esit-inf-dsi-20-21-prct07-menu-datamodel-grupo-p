@@ -1,3 +1,5 @@
+Nos hemos quedado en el minuto 4:00 del tutorial de coveralls con Github Actions
+
 DUDAS DE LA PRACTICA
  - ¿Son carne, pescado, huevos, etc. un solo grupo?
  - Clase platos -> Grupo predominante. ==> Entendemos que el grupo
