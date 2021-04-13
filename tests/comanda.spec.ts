@@ -42,40 +42,49 @@ describe('Test clase Comanda', () => {
   const lecheCondensada = new Alimento('Leche Condensada Entera', 3.09, 'Madriz', 343, {carbohidratos: 26, proteinas: 8.8, lipidos: 9.3}, 'LACTEOS');
   const quesillo = new Plato('Quesillo', [[huevo, 50], [azúcarBlanco, 150], [leche, 370], [lecheCondensada, 370]], 'POSTRE');
   
-  const CartaRestauranteModerna = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
-  const ComandaRestaurante = new Comanda(CartaRestauranteModerna); 
+  const CartaRestauranteLunaRosa = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
+  const ComandaRestaurante = new Comanda(CartaRestauranteLunaRosa); 
   describe('Es posible instanciar un alimento', () => {
  
     it('Instancia de la comanda.', () => {
       expect(ComandaRestaurante).to.exist;
     });
     it('Instancia de Comanda no es nula.', () => {
-      expect(new Comanda(CartaRestauranteModerna)).not.null;
+      expect(new Comanda(CartaRestauranteLunaRosa)).not.null;
     });
   });
   describe('Los métodos que modifican la comanda funcionan correctamente.', () => {
     it('Se añade un menú a la comanda correctamente.', () => {
       ComandaRestaurante.sumarMenu('Vegetariano', 1);
-      expect(ComandaRestaurante.mostrarComanda().length).to.eql(1);
+      ComandaRestaurante.sumarMenu('día', 1);
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(2);
     });
     it('Se añade un plato a la comanda correctamente.', () => {
       ComandaRestaurante.sumarPlato('Quesillo', 1);
-      expect(ComandaRestaurante.mostrarComanda()).to.eql([[MenuVegetariano, 1], [quesillo, 1]]);
+      expect(ComandaRestaurante.mostrarComanda()).to.eql([MenuVegetariano, MenuDelDia, quesillo]);
+    });
+    it('El número de elementos en el menú es 3.', () => {
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(3);
     });
     it('Se elimina un plato de la comanda correctamente.', () => {
       ComandaRestaurante.quitarElemento('Vegetariano', 1);
-      //expect(ComandaRestaurante.mostrarComanda().length).to.eql(1);
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(2);
+      expect(ComandaRestaurante.mostrarComanda()).to.eql([MenuDelDia, quesillo]);
     });
   });
-/*
   describe('Comprobando funciones de Comanda', () => {
-
+    let elementoEncontrado = ComandaRestaurante.encontrarEnComanda('quesillo');
       it('Buscar en Comanda un plato: quesillo -> returns [quesillo]', () => {
-        expect(ComandaRestaurante.encontrarEnComanda('quesillo')).to.eql([quesillo])
+        if (elementoEncontrado instanceof Plato) {
+          expect(elementoEncontrado.getNombrePlato()).to.eql('Quesillo')
+        }
       });
-
+      
+      elementoEncontrado = ComandaRestaurante.encontrarEnComanda('día');
       it('Buscar en Comanda un menu: Menu del dia -> returns [MenuDelDia]', () => {
-        expect(ComandaRestaurante.encontrarEnComanda('Menú del día')).to.eql([MenuDelDia])
+        if (elementoEncontrado instanceof Menu) {
+        expect(elementoEncontrado.getNombreMenu()).to.eql('Menú del día')
+        }
       });
-  });*/
+  });
 });
