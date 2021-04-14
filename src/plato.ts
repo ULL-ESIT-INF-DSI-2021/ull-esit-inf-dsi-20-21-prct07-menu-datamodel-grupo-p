@@ -95,8 +95,8 @@ export class Plato {
   }
 
   /**
-   * Calcula el grupo de alimento predominante, es decir, al grupo de alimentos que 
-   * más aparece entre los ingredientes del plato
+   * Calcula el grupo de alimentos predominante, es decir, el grupo de alimentos que 
+   * más aparece entre los ingredientes del plato.
    * @return El grupo más repetido.
    */
   calculoGrupoPredominante() {
@@ -173,7 +173,16 @@ export class Plato {
           throw new Error("Error al calcular el grupo predominante.");
           break;
       }
-      return 'MIX';
+      let mayorCoincidencias = contadorAlimentos[0];
+      let posicion = 0;
+      for (let i = 1; i < contadorAlimentos.length; i++) {
+        if (contadorAlimentos[i] > mayorCoincidencias) {
+          mayorCoincidencias = contadorAlimentos[i];
+          posicion = i;
+        }
+      }
+      let arrayGrupos: string[] = ['CARNES', 'PESCADOS', 'HUEVOS', 'TOFU', 'FRUTOS_SECOS', 'SEMILLAS', 'LEGUMBRES', 'VERDURAS', 'HORTALIZAS', 'LACTEOS', 'CEREALES', 'FRUTAS', 'PROCESADOS'];
+      return arrayGrupos[posicion];
     });
   }
 }

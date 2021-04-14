@@ -6,10 +6,11 @@ import { Categoria } from "./plato";
 import { Menu } from "./menu";
 import { Carta } from "./carta";
 import { Comanda } from "./comanda";
-//import * as inquirer from 'inquirer';
+import * as inquirer from "./main";
 import * as lowdb from "lowdb";
 import * as FileSync from "lowdb/adapters/FileSync";
-import moduleName from '';
+
+//import moduleName from '';
 
 
 //Esto enumarara las diferentes opciones del menu principal
@@ -17,75 +18,49 @@ import moduleName from '';
 //#################################################################################
 //LOWDB
 //#################################################################################
+
+
+
+// falta instanciar las base de datos
+/* no estoy seguro de que sea esto, es lo uncio que encuentro 
+const dbfile = "/path/to/your/db/file.json";
+const adapter = new FileSync(dbfile);
+this.database = new lowdb(adapter);
+*/
+
+type schemaComanda = {
+  comandas: {
+    //poner valores de la clase comanda 
+    id: number;
+    Menu: string;
+    hecho: boolean;
+
+  } [];
+}
+
 export class JsonComanda extends Comanda {
     //
-    constructor(public readonly carta: Carta){
-      super(carta);
+
+    private database: lowdb.LowdbSync<schemaComanda>;
+
+    constructor(public readonly comanda: comanda){
+      super(comanda);
+      this.database = (new FileSync("BBDD.json"));
+      if(this.database.has('comanda').value()){
+        let bbddValue =  this.database.get('comanda').value();
+        bbddValue.array.forEach(element => {
+          
+        });
+      }else{
+        //this.database.set('comanda').write();
+        //arreglo.forEach(element => this.{
+          
+        });
+      }
     }
 }
 
 
-
-//#################################################################################
-//INQUIRER
-//#################################################################################
-const inquirer = require('inquirer');
-
-
-enum options{
-  Visualizar = "Visualizar la Carta",
-  Comanda = "Hacer comanda",
-  Salir = "Salir"
-}
-
-// Hacemos otro enum para el segundo menu
-enum SecondOption{
-  ElegirMenu = "Elegir una comanda del menu",
-  CrearMenu = "Crear un menú personalizado en base a la carta",
-  ModificarMenu = "Modificar uno de los menus "
-}
-
-//Segundo Menu para el caso de  Comandas
-function promptSecond(){
-  console.clear();
-  const respuesta = inquirer.prompt({
-    type: 'list',
-    name: 'SegundaRespuesta',
-    Message: '¿Qué desea hacer ahora?',
-    choices: Object.values(SecondOption)
-  });
-  switch(respuesta["SegundaRespuesta"]){
-    case SecondOption.ElegirMenu:
-      break;
-    case SecondOption.CrearMenu:
-      break;
-    case SecondOption.ModificarMenu:
-      break;
-  }
-}
-  
-// Funcion principal del menu 
-function promptComanda(){
-  console.clear();
-  //seria necesario el async si quisieramos ejecutar algo aqui a parte como la visualizacion de algo
-  const answers = inquirer.prompt({
-    type: 'list',
-    name: 'respuesta',
-    message: 'Seleccione una opcion:',
-    choices: Object.values(options)
-  });
-  
-  switch (answers["respuesta"]) {
-    case options.Visualizar:
-      //Llamada a un funcion que devuelva la carta del restaurante 
-      //let miCarta = new Carta(nombre,todos los menus de la carta, platos sueltos);
-      break;
-    case options.Comanda:
-      //Aqui va la funcion que ejecuta un menu interno que permite modificar o seleccionar un menu personalizado
-      promptSecond();
-      break;
-    case options.Salir:
-      //salimos
-      break;
-  }
-}
+//---------------------------------------> NO TENGO NI PUTA IDEA DE LOWDB :D  <--------------------------------------------------------------------------------------------------
+// TUUUUU  TUUUUU TURUTUUUUUUUUUUUUU    TUUUUUUUUUUUUUU TURUTU TU TU TU TU TURUTURU TUUUUUUUU
+//                                        NO MAS TUTORIALES!!!!!!!

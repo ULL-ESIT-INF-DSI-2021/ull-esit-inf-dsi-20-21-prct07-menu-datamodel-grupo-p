@@ -8,8 +8,8 @@ import * as readline from 'readline';
  */
 export class Comanda {
   /**
-   * Constructor de la clase Comanda.
-   * @param carta Objeto Carta de la que consultar los Menús/Platos.
+   * Constructor de la clase Comanda.    arrzo 
+   * @param comanda Es un array dond
    */
   private comanda: (Menu|Plato)[] = [];
   constructor(public readonly carta: Carta) {
