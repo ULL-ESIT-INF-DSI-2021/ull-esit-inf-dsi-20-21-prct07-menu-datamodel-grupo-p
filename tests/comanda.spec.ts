@@ -79,7 +79,6 @@ describe('Test clase Comanda', () => {
           expect(elementoEncontrado.getNombrePlato()).to.eql('Quesillo')
         }
       });
-      
       elementoEncontrado = ComandaRestaurante.encontrarEnComanda('día');
       it('Buscar en Comanda un menu: Menu del dia -> returns [MenuDelDia]', () => {
         if (elementoEncontrado instanceof Menu) {

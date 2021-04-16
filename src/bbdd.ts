@@ -39,25 +39,24 @@ type schemaComanda = {
 }
 
 export class JsonComanda extends Comanda {
-    //
+  //
 
-    private database: lowdb.LowdbSync<schemaComanda>;
+  private database: lowdb.LowdbSync<schemaComanda>;
 
-    constructor(public readonly comanda: comanda){
-      super(comanda);
-      this.database = (new FileSync("BBDD.json"));
-      if(this.database.has('comanda').value()){
-        let bbddValue =  this.database.get('comanda').value();
-        bbddValue.array.forEach(element => {
-          
-        });
-      }else{
-        //this.database.set('comanda').write();
-        //arreglo.forEach(element => this.{
-          
-        });
-      }
+  constructor(public readonly comandaJson: Comanda) {
+    super(comandaJson);
+    this.database = (new FileSync("BBDD.json"));
+    if(this.database.has('comanda').value()) {
+      let bbddValue =  this.database.get('comanda').value();
+      bbddValue.array.forEach((elemento) => {
+        
+      });
+    } else {
+      //this.database.set('comanda').write();
+      //arreglo.forEach(element => this.{
+        
     }
+  }
 }
 
 
