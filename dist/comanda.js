@@ -1,7 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Comanda = void 0;
-const inquirer = require('inquirer');
+const plato_1 = require("./plato");
+const menu_1 = require("./menu");
+const readline = require("readline");
 /**
  * Esta es la clase Comanda.
  */
@@ -9,76 +11,124 @@ class Comanda {
     constructor(carta) {
         this.carta = carta;
         /**
-         * Constructor de la clase Comanda.
-         * @param carta Nombre de la carta.
+         * Constructor de la clase Comanda.    arrzo
+         * @param comanda Es un array dond
          */
-        // Comanda -> [Lo que pide, cantidad de lo que pide]
         this.comanda = [];
     }
     /**
      * Obtiene la comanda.
-     * @returns La comanda entera.
+     * @returns Array comanda entero.
      */
     mostrarComanda() {
         return this.comanda;
     }
     /**
-     * Método que permite al cliente añadir un menú a la comanda
+     * Método que permite al cliente añadir un menú a la comanda.
+     * Busca la cadena dentro de los nombres de todos los menús de la Carta.
+     * Encuentra todas las coincidencias, y si son 2 o más (diferentes), pregunta al cliente
+     * si quiere de ese tipo.
+     *
      * @param nombreMenu El nombre del menú que quiere añadir a la comanda.
      * @param cantidadMenu La cantidad de menús que quiere añadir a la comanda.
      */
     sumarMenu(nombreMenu, cantidadMenu) {
         const matchedMenus = this.carta.searchMenu(nombreMenu);
-        // EN ESTE PUNTO, SI HAY CERO O MÁS DE DOS COINCIDENCIAS EN EL MENÚ 
-        // preguntar al cliente con cuál de ellas se quiere quedar u ofrecerle buscar de nuevo. 
-        /**
-         * Esto lo que hace es que todos los platos que coincidan con el nombre buscado,
-         * los añade igualmente a la comanda y en la misma cantidad.
-         * Así que HAY QUE ARREGLARLO.
-         */
-        matchedMenus.forEach((element) => {
-            this.comanda.push([element, cantidadMenu]);
+        let rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
         });
+        if (matchedMenus.length <= 0) {
+            console.log('No se encontró en la Carta.');
+        }
+        else {
+            if (matchedMenus.length > 1) {
+                matchedMenus.forEach((elemento) => {
+                    rl.question(('¿Añadir ' + elemento.getNombreMenu() + ' a la comanda?'), (answer) => {
+                        switch (answer.toLowerCase()) {
+                            case 'si':
+                                console.log('Menú añadido');
+                                break;
+                            case 'no':
+                                let index = matchedMenus.indexOf(elemento);
+                                if (index > -1)
+                                    matchedMenus.splice(index, 1);
+                                break;
+                            default:
+                                console.log('Respuesta no soportada.');
+                        }
+                    });
+                });
+            }
+            matchedMenus.forEach((element) => {
+                for (let index = 0; index < cantidadMenu; index++) {
+                    this.comanda.push(element);
+                }
+            });
+        }
     }
     /**
-     * Método que permite al cliente añadir un plato a la comanda
+     * Método que permite al cliente añadir un plato a la comanda.
+     * Busca la cadena dentro de los nombres de todos los platos de la Carta.
+     * Encuentra todas las coincidencias, y si son 2 o más (diferentes), pregunta al cliente
+     * si quiere de ese tipo.
+     *
      * @param nombrePlato El nombre del plato que quiere añadir a la comanda.
      * @param cantidadPlato La cantidad de este tipo de platos que quiere añadir a la comanda.
      */
     sumarPlato(nombrePlato, cantidadPlato) {
         const matchedPlatos = this.carta.searchPlato(nombrePlato);
-        matchedPlatos.forEach((element) => {
-            this.comanda.push([element, cantidadPlato]);
+        let rl = readline.createInterface({
+            input: process.stdin,
+            output: process.stdout
         });
+        if (matchedPlatos.length <= 0) {
+            console.log('No se encontró en la Carta.');
+        }
+        else {
+            if (matchedPlatos.length > 1) {
+                matchedPlatos.forEach((elemento) => {
+                    console.log('¿Añadir ' + elemento.getNombrePlato() + ' a la comanda?');
+                    rl.question(('¿Añadir ' + elemento.getNombrePlato() + ' a la comanda?'), (answer) => {
+                        switch (answer.toLowerCase()) {
+                            case 'si':
+                                console.log('Plato añadido');
+                                break;
+                            case 'no':
+                                let index = matchedPlatos.indexOf(elemento);
+                                if (index > -1)
+                                    matchedPlatos.splice(index, 1);
+                                break;
+                            default:
+                                console.log('Respuesta no soportada.');
+                        }
+                    });
+                });
+            }
+            matchedPlatos.forEach((element) => {
+                for (let index = 0; index < cantidadPlato; index++) {
+                    this.comanda.push(element);
+                }
+            });
+        }
     }
     /**
-     * Función para deshacer el guardián de tipos.
-     * @returns True si el objeto es de clase Menu.
-     */
-    isMenu(myObj) {
-        return myObj.getNombreMenu() !== undefined;
-    }
-    /**
-     * Función para deshacer el guardián de tipos.
-     * @returns True si el objeto es de clase Plato.
-     */
-    isPlato(myObj) {
-        return myObj.getNombrePlato() !== undefined;
-    }
-    /**
-     * Método que permite encontrar una comanda deseada.
+     * Método que permite encontrar un elemento de la comanda.
+     * Deshace el guardián de tipos entre Menu y Plato para consultar correctamente
+     * el nombre del elemento. Si el nombre coincide, entonces añade el objeto en el array.
+     *
      * @param nombre Nombre de la comanda a buscar.
+     * @return Array de los objetos que coinciden en nombre.
      */
     encontrarEnComanda(nombre) {
         const matchedResults = [];
-        this.comanda[0].forEach((elemento) => {
-            console.log(elemento);
-            if (this.isMenu(elemento)) {
+        this.comanda.forEach((elemento) => {
+            if (elemento instanceof menu_1.Menu) {
                 if (elemento.getNombreMenu().search(nombre) > -1) {
                     matchedResults.push(elemento);
                 }
             }
-            else if (this.isPlato(elemento)) {
+            else if (elemento instanceof plato_1.Plato) {
                 if (elemento.getNombrePlato().search(nombre) > -1) {
                     matchedResults.push(elemento);
                 }
@@ -87,81 +137,21 @@ class Comanda {
         return matchedResults;
     }
     /**
-     * Método que permite eliminar una comanda deseada.
-     * @param nombre Nombre de la comanda a eliminar.
+     * Método que permite eliminar elementos de la comanda.
+     * Busca la subcadena que le otorgamos entre los nombres de todos los elementos
+     * de la Comanda y almacena esos objetos para poder eliminarlos de la lista.
+     *
+     * @param nombre Nombre del elemento a eliminar.
      */
-    quitarElemento(nombreMenu, cantidadMenu) {
-        const matchedMenus = this.encontrarEnComanda(nombreMenu);
+    quitarElemento(nombreElemento, cantidadMenu) {
+        const matchedMenus = this.encontrarEnComanda(nombreElemento);
         let index;
-        let valorObjeto;
-        this.comanda.forEach((elemento) => {
-            //valorObjeto = elemento[0];
-            index = this.comanda.indexOf(elemento, 0);
+        matchedMenus.forEach((elemento) => {
+            index = this.comanda.indexOf(elemento);
             if (index > -1) {
                 this.comanda.splice(index, 1);
             }
-            /*
-          if (this.isMenu(element[0])) {
-            index = this.comanda.indexOf(element[0], 0);
-            if (index > -1) {
-              this.comanda.splice(index, 1);
-            }
-          } else if (this.isPlato(element[0]) {
-            index = this.comanda.indexOf(element[0], 0);
-            if (index > -1) {
-              this.comanda.splice(index, 1);
-            }
-          }*/
         });
     }
 }
 exports.Comanda = Comanda;
-/*
-* 1: Visualizar la carta del restaurante: Para cada menú y/o plato,
-*   el cliente querrá poder observar toda la información que tiene
-*   (precio, ingredientes, composición nutricional y grupos de alimentos).
-*
-* 2: Realizar una comanda: El cliente podra: -> Elegir una comanda del menu preestablecido
-*                                            -> Podra crear un menu personalizado en base a la carta -> visualizar la carta
-*                                                                                                     -> Elegir platos y cantidad
-*                                            -> Podra modificar uno de los menu preestablecidos -> Eliminando platos
-*/
-//Esto enumarara las diferentes opciones del menu principal
-var options;
-(function (options) {
-    options["Visualizar"] = "Visualizar la Carta";
-    options["Comanda"] = "Hacer comanda";
-    options["Salir"] = "Salir";
-})(options || (options = {}));
-async function promptSecond() {
-    console.clear();
-    inquirer.prompt({
-        type: 'list',
-        name: 'segundarespuesta',
-        Message: '¿Que desea hacer ahora?',
-        choices: ''
-    });
-}
-// Funcion principal del menu 
-function promptComanda() {
-    console.clear();
-    //seria necesario el async si quisieramos ejecutar algo aqui a parte como la visualizacion de algo
-    const answers = inquirer.prompt({
-        type: 'list',
-        name: 'respuesta',
-        message: 'Seleccione una opcion:',
-        choices: Object.values(options)
-    });
-    switch (answers["respuesta"]) {
-        case options.Visualizar:
-            //Llamada a un funcion que devuelva la carta del restaurante 
-            //let miCarta = new Carta('Restaurante eugenio',,);
-            break;
-        case options.Comanda:
-            //Aqui va la funcion que ejecuta un menu interno que permite modificar o seleccionar un menu personalizado
-            break;
-        case options.Salir:
-            //salimos
-            break;
-    }
-}

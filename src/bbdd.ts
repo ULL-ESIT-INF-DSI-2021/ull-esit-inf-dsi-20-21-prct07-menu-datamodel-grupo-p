@@ -7,7 +7,7 @@ import { Menu } from "./menu";
 import { Carta } from "./carta";
 import { Comanda } from "./comanda";
 import * as inquirer from "./main";
-import * as lowdb from "lowdb";
+import * as low from "lowdb";
 import * as FileSync from "lowdb/adapters/FileSync";
 
 //import moduleName from '';
@@ -19,14 +19,9 @@ import * as FileSync from "lowdb/adapters/FileSync";
 //LOWDB
 //#################################################################################
 
+const adapter = new FileSync('bbdd.json')
+const bbdd = low(adapter)
 
-
-// falta instanciar las base de datos
-/* no estoy seguro de que sea esto, es lo uncio que encuentro 
-const dbfile = "/path/to/your/db/file.json";
-const adapter = new FileSync(dbfile);
-this.database = new lowdb(adapter);
-*/
 
 type schemaComanda = {
   comandas: {
@@ -38,7 +33,7 @@ type schemaComanda = {
   } [];
 }
 
-export class JsonComanda extends Comanda {
+/*export class JsonComanda extends Comanda {
   //
 
   private database: lowdb.LowdbSync<schemaComanda>;
@@ -57,7 +52,7 @@ export class JsonComanda extends Comanda {
         
     }
   }
-}
+}*/
 
 
 //---------------------------------------> NO TENGO NI PUTA IDEA DE LOWDB :D  <--------------------------------------------------------------------------------------------------

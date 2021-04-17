@@ -53,9 +53,9 @@ export declare class Plato {
      */
     calculoPrecio(): number;
     /**
-     * Calcula el grupo de alimento predominante, es decir, al grupo de alimentos que
-     * más aparece entre los ingredientes del plato
+     * Calcula el grupo de alimentos predominante, es decir, el grupo de alimentos que
+     * más aparece entre los ingredientes del plato.
      * @return El grupo más repetido.
      */
-    calculoGrupoPredominante(): void;
+    calculoGrupoPredominante(): string;
 }

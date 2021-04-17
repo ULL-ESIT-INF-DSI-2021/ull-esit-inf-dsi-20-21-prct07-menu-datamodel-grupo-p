@@ -45,7 +45,6 @@ describe('Test clase Comanda', () => {
   const CartaRestauranteLunaRosa = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
   const ComandaRestaurante = new Comanda(CartaRestauranteLunaRosa); 
   describe('Es posible instanciar un alimento', () => {
- 
     it('Instancia de la comanda.', () => {
       expect(ComandaRestaurante).to.exist;
     });

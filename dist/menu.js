@@ -11,8 +11,8 @@ class Menu {
         /**
          * Constructor de la clase Menu. Comprueba que existan al menos 3 platos de 3 categorías
          * distintas (Entrante, Primero, Segundo y Postre) en cada Menú. Si no los hay, devuelve un error.
-         * @param nombreMenu Nombre del plato en cuestión.
-         * @param primerPlato Primer plato del menú
+         * @param nombreMenu Nombre del menú en cuestión.
+         * @param primerPlato Primer plato del menú.
          * @param demasPlatos Array donde se almacenan el resto de los platos del menú.
          */
         this.precio = 0;
@@ -21,27 +21,24 @@ class Menu {
         demasPlatos.forEach((element) => {
             this.arrayPlatos.push(element);
         });
-        let existeEntrante = 0;
-        let existePrimero = 0;
-        let existeSegundo = 0;
-        let existePostre = 0;
+        let existeElemento = [0, 0, 0, 0];
         let grupoElemento;
         this.arrayPlatos.forEach((elemento) => {
             grupoElemento = elemento.getCategoria();
             if (grupoElemento === 'ENTRANTE') {
-                existeEntrante = 1;
+                existeElemento[0] = 1;
             }
             else if (grupoElemento === 'PRIMERO') {
-                existePrimero = 1;
+                existeElemento[1] = 1;
             }
             else if (grupoElemento === 'SEGUNDO') {
-                existeSegundo = 1;
+                existeElemento[2] = 1;
             }
             else if (grupoElemento === 'POSTRE') {
-                existePostre = 1;
+                existeElemento[3] = 1;
             }
         });
-        const counts = existeEntrante + existePrimero + existeSegundo + existePostre;
+        const counts = existeElemento[0] + existeElemento[1] + existeElemento[2] + existeElemento[3];
         if (counts < 3) {
             throw new Error("Los menús deben tener 3 categorías de platos como mínimo.");
         }

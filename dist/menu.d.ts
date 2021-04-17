@@ -7,8 +7,8 @@ export declare class Menu {
     /**
      * Constructor de la clase Menu. Comprueba que existan al menos 3 platos de 3 categorías
      * distintas (Entrante, Primero, Segundo y Postre) en cada Menú. Si no los hay, devuelve un error.
-     * @param nombreMenu Nombre del plato en cuestión.
-     * @param primerPlato Primer plato del menú
+     * @param nombreMenu Nombre del menú en cuestión.
+     * @param primerPlato Primer plato del menú.
      * @param demasPlatos Array donde se almacenan el resto de los platos del menú.
      */
     private precio;

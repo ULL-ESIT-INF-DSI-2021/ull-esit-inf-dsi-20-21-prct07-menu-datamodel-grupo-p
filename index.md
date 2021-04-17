@@ -174,7 +174,7 @@ calculoMacronutrientes() {
 }
 ```
 
-El segundo método que vemos es `calculoPrecio()` el cual calcula el precio en función a la cantidad utilizada de cada alimento. También posee un `forEach()` con un sumatorio para ir almacenando la suma de todos los precios de los platos después de aplicarle una operación.
+El segundo método que vemos es `calculoPrecio()` el cual calcula el precio en función a la cantidad utilizada de cada alimento (con el precio justo al por mayor). También posee un `forEach()` con un sumatorio para ir almacenando la suma de todos los precios de los platos después de aplicarle una operación. Para darle un resultado más a tono con el mundo real, al precio final del plato le sumamos 3 euros de beneficio, en caso contrario tendría un precio demasiado bajo.
 
 ```typescript
 calculoPrecio(): number {
@@ -184,7 +184,7 @@ calculoPrecio(): number {
     const precioGramo = (precio / 1000) * elemento[1];
     sumatorio += precioGramo;
   })
-  return sumatorio;
+  return sumatorio + 3;
 }
 ```
 
@@ -210,17 +210,23 @@ calculoGrupoPredominante() {
          * ...demás cases. 
          */
     }
-    let mayorCoincidencias = contadorAlimentos[0];
-    let posicion = 0;
-    for (let i = 1; i < contadorAlimentos.length; i++) {
-      if (contadorAlimentos[i] > mayorCoincidencias) {
-        mayorCoincidencias = contadorAlimentos[i];
-        posicion = i;
-      }
-    }
-    let arrayGrupos: string[] = ['CARNES', 'PESCADOS', 'HUEVOS', 'TOFU', 'FRUTOS_SECOS', 'SEMILLAS', 'LEGUMBRES', 'VERDURAS', 'HORTALIZAS', 'LACTEOS', 'CEREALES', 'FRUTAS', 'PROCESADOS'];
-    return arrayGrupos[posicion];
   });
+  let mayorCoincidencias = contadorAlimentos[this.alimentos[0].indexOf(this.alimentos[0][0])];
+  let posicion = this.alimentos[0].indexOf(this.alimentos[0][0]);
+  for (let i = 0; i < posicion; i++) {  // Bucle antes del grupo del primer alimento.
+    if (contadorAlimentos[i] > mayorCoincidencias) {
+      mayorCoincidencias = contadorAlimentos[i];
+      posicion = i;
+    }
+  }
+  for (let i = posicion; i < contadorAlimentos.length; i++) { // Bucle después del grupo del primer alimento.
+    if (contadorAlimentos[i] > mayorCoincidencias) {
+      mayorCoincidencias = contadorAlimentos[i];
+      posicion = i;
+    }
+  }
+  let arrayGrupos: string[] = ['CARNES', 'PESCADOS', 'HUEVOS', 'TOFU', 'FRUTOS_SECOS', 'SEMILLAS', 'LEGUMBRES', 'VERDURAS', 'HORTALIZAS', 'LACTEOS', 'CEREALES', 'FRUTAS', 'PROCESADOS'];
+  return arrayGrupos[posicion];
 }
 ```
 
@@ -615,15 +621,81 @@ quitarElemento(nombreElemento: string, cantidadMenu: number) {
 }
 ```
 
+Por último, están los tests de la clase. Usamos los mismos objetos que para los tests `Carta`. Y en un principio hacemos las mismas comprobaciones: que se puede instanciar un objeto, que podemos añadir elementos (esta vez a la **comanda**) y que podemos eliminarlos también. 
 
+Para ello, hacemos uso de las funciones `sumarMenu()` y/o `sumarPlato()`, para después comprobar que se ha añadido correctamente consultando la longitud y los elementos del array. La última parte comprueba también el método `encontrarEnComanda()`, para lo cual deshacemos el guardián de tipos y comprobamos que el nombre del objeto es el esperado.
 
 ```typescript
+import 'mocha';
+import { expect } from 'chai';
+import { Alimento } from '../src/alimento';
+import { Plato } from '../src/plato';
+import { Menu } from '../src/menu';
+import { Carta } from '../src/carta';
+import { Comanda } from '../src/comanda';
+describe('Test clase Comanda', () => {
+  const tomate = new Alimento('Tomate', 1.54, 'Huelva', 22, {carbohidratos: 3.5, proteinas: 1, lipidos: 0.11}, 'HORTALIZAS');
+  /**
+   * Resto de alimentos instanciados
+   */ 
+    const ensalada = new Plato('Ensalada', [[tomate, 70], [lechuga, 50], [cebolla, 10], [aceiteDeOlivaVirgen, 5]], 'ENTRANTE');
+    const potajeDeLentejas = new Plato('Potaje de lentejas', [[lentejas, 50], [papasArrugadas, 30], [chorizo, 10], [cilantro, 5]], 'PRIMERO');
+    const arrozCubana = new Plato('Arroz a la cubana', [[arroz, 250], [huevo, 150], [platano, 120]], 'SEGUNDO');
+    const papasConMojo = new Plato('Papas con mojo de cilantro', [[papasArrugadas, 200], [cilantro, 50]], 'PRIMERO');
+    const curryDeLentejas = new Plato('Curry de lentejas vegetariano', [[lentejas, 40], [papasArrugadas, 40], [arroz, 70], [lecheDeCoco, 100]], 'SEGUNDO');
+  const MenuDelDia = new Menu('Menú del día', ensalada, potajeDeLentejas, arrozCubana);
+  const MenuVegetariano = new Menu('Menú Vegetariano', ensalada, papasConMojo, curryDeLentejas);
+  const quesillo = new Plato('Quesillo', [[huevo, 50], [azúcarBlanco, 150], [leche, 370], [lecheCondensada, 370]], 'POSTRE');
 
+  const CartaRestauranteModerna = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
+  const ComandaRestaurante = new Comanda(CartaRestauranteLunaRosa); 
+  describe('Es posible instanciar un alimento', () => {
+    it('Instancia de la comanda.', () => {
+      expect(ComandaRestaurante).to.exist;
+    });
+    it('Instancia de Comanda no es nula.', () => {
+      expect(new Comanda(CartaRestauranteLunaRosa)).not.null;
+    });
+  });
+  describe('Los métodos que modifican la comanda funcionan correctamente.', () => {
+    it('Se añade un menú a la comanda correctamente.', () => {
+      ComandaRestaurante.sumarMenu('Vegetariano', 1);
+      ComandaRestaurante.sumarMenu('día', 1);
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(2);
+    });
+    it('Se añade un plato a la comanda correctamente.', () => {
+      ComandaRestaurante.sumarPlato('Quesillo', 1);
+      expect(ComandaRestaurante.mostrarComanda()).to.eql([MenuVegetariano, MenuDelDia, quesillo]);
+    });
+    it('El número de elementos en el menú es 3.', () => {
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(3);
+    });
+    it('Se elimina un plato de la comanda correctamente.', () => {
+      ComandaRestaurante.quitarElemento('Vegetariano', 1);
+      expect(ComandaRestaurante.mostrarComanda().length).to.eql(2);
+      expect(ComandaRestaurante.mostrarComanda()).to.eql([MenuDelDia, quesillo]);
+    });
+  });
+  describe('Comprobando funciones de Comanda', () => {
+    let elementoEncontrado = ComandaRestaurante.encontrarEnComanda('quesillo');
+      it('Buscar en Comanda un plato: quesillo -> returns [quesillo]', () => {
+        if (elementoEncontrado instanceof Plato) {
+          expect(elementoEncontrado.getNombrePlato()).to.eql('Quesillo')
+        }
+      });
+      elementoEncontrado = ComandaRestaurante.encontrarEnComanda('día');
+      it('Buscar en Comanda un menu: Menu del dia -> returns [MenuDelDia]', () => {
+        if (elementoEncontrado instanceof Menu) {
+        expect(elementoEncontrado.getNombreMenu()).to.eql('Menú del día')
+        }
+      });
+  });
+});
 ```
 
 <br/><br/>
 
-### 2.6. Clase JsonComanda. <a name="id26"></a>
+### 2.6. Fichero Main. <a name="id26"></a>
 
 ```typescript
 
@@ -657,11 +729,23 @@ Durante la creación de la clase `Comanda`, se nos planteó la duda de si un cli
 
 El fichero `bbdd.ts` es la parte que más problemas nos ha dado. Para todos no es nuevo trabajar con `inquirer` y `lowdb`, lo cual ha supuesto bastante prueba y error (de compilación) con los ejemplos que hemos seguido. 
 
+**AÑADIR MÁS COMPLICACIONES SI SURGEN**
+
 <br/><br/>
 
 ## 4. Conclusión. <a name="id4"></a>
 
-Tras la finalización de esta práctica, hemos conseguido obtener bastantes conocimientos de Typescript, más concretamente en clases e interfaces genéricas. Además, hemos profundizado en la implementación correcta de los principios SOLID.
+Los objetivos que hemos cumplido satisfactoriamente sobre esta práctica han sido: crear una estructura de Menú usando los módulos Inquirer.js y Lowdb sobre un grupo de objetos en Typescript. ???
+
+Es decir, hemos aplicado un buen diseño de las clases solicitadas en el guión y respetando los principios SOLID. Con ello, conseguimos que la información que contiene cada clase esté bien ordenada y tenga sentido, en un entorno práctico.
+
+Hemos realizado las pruebas según la metodología TDD: primero creando las funciones para que fallen, y después completarlas hasta que supongamos que funcionen. Con este prueba y error en el que comparamos los resultados con los objetos instanciados dentro del fichero de pruebas, nos ha hecho adoptar un modelo y metodología que creemos correcta para TDD.
+
+Por último, ha sido nuestro primer contacto con **Inquirer.js** y **Lowdb**. Nos ha costado hacer que los ejemplos no den errores de compilación y que nuestras implementaciones funcionen correctamente.
+
+**Inquirer.js** nos ha enseñado a crear Menús intuitivos para el usuario...
+
+**Lowdb** nos permite almacenar los datos de objetos en un fichero...
 
 <br/><br/>
 

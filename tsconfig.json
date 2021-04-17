@@ -10,9 +10,9 @@
     "outDir": "./dist",
     "rootDir": "./src",
     "declaration": true,
-    "noImplicitAny": true, //No se permite la inferencia del tipo any por parte del compilador de Typescript
+    "noImplicitAny": false, //No se permite la inferencia del tipo any por parte del compilador de Typescript
     "strictNullChecks": true, //No podemos asignar NULL y UNDEFINED a todos los tipos de Typescript
     "strictPropertyInitialization": true, //Hay que tener inicializadas todas las propiedades definidas de una clase
-    "noImplicitReturns": true //Obliga a que todas las funciones contengan algún tipo de retorno
+    "noImplicitReturns": false //Obliga a que todas las funciones contengan algún tipo de retorno
   }
 }

@@ -20,10 +20,11 @@ describe('Test clase Plato', () => {
     });
     it('Los métodos getter devuelven los valores esperados', () => {
       expect(arrozCubana.getNombrePlato()).to.be.equal('Arroz a la cubana');
-      expect(arrozCubana.getPrecio()).to.be.equal(0.5025);
+      expect(arrozCubana.getPrecio()).to.be.equal(3.5025);
       expect(arrozCubana.getCategoria()).to.be.equal('SEGUNDO');
       expect(arrozCubana.getAlimentos()).to.eql([[arroz, 250], [huevo, 150], [platano, 120]]); 
       expect(arrozCubana.getMacronutrientesPlato()).to.eql({carbohidratos: 417.2, proteinas: 49.9, lipidos: 24.99});
+      expect(arrozCubana.calculoGrupoPredominante()).to.eql('CEREALES');
     });
   });
 });

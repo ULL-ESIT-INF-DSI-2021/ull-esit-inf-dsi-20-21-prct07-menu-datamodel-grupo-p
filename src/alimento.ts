@@ -77,7 +77,7 @@ export class Alimento {
    * Obtiene el grupo del alimento
    * @returns Grupo del alimento.
    */
-  getGrupo() {
+  getGrupo(): Grupo {
     return this.grupo;
   }
 }
