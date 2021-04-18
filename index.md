@@ -31,7 +31,9 @@
 
       2.5. [Clase Comanda.](#id25)
 
-      2.6. [Clase JsonComanda.](#id26)
+      2.6. [Fichero Main.](#id26)
+
+      2.7 [Fichero Stock.](#id27)
 4. [Dificultades.](#id3)
 5. [Conclusión.](#id4)
 6. [Referencias.](#id5)
@@ -230,6 +232,24 @@ calculoGrupoPredominante() {
 }
 ```
 
+Otras funciones que contiene la clase son las que permiten añadir y eliminar `Alimento` al plato. La primera simplemente recibe un objeto `Alimento` y lo añade al array. La segunda recibe el objeto y un número, y lo elimina en esa cantidad si lo encuentra en el array.
+
+```typescript
+addNuevoAlimento(nuevoAlimento: Alimento, cantidadAlimento: number) {
+  this.alimentos.push([nuevoAlimento, cantidadAlimento]);
+}
+
+deleteAlimento(alimento: Alimento, cantidadAlimento: number): void {
+  let pos: number = -1;
+  let index = this.alimentos.indexOf([alimento, cantidadAlimento]);
+  if (index == - 1) {
+    console.log('El plato no se encuentra en el menu. Lo sentimos');
+  } else {
+    this.alimentos.splice(index, 1);
+  }
+}
+```
+
 Los tests que hemos realizado sobre la clase se encuentran a continuación. Todos son muy sencillos porque son *getters*, y realmente nos sirven para comprobar que podemos obtener bien los datos esperados.  
 
 ```typescript
@@ -339,6 +359,24 @@ getPrecioMenu(): number {
     precioTotal += element.getPrecio();
   });
   return precioTotal;
+}
+```
+
+Las últimas funciones de la clase son `addNuevoPlato()` y `deletePlato()`. El primero simplemente añade el objeto `Plato` que se le otorgue al array de platos. El segundo recibe el objeto a eliminar del array, si lo encuentra.
+
+```typescript
+addNuevoPlato(plato: Plato): void {
+  this.arrayPlatos.push(plato);
+}
+
+deletePlato(plato: Plato): void {
+  let pos: number = -1;
+  let index = this.arrayPlatos.indexOf(plato);
+  if(index == -1) {
+    console.log('El plato no se encuentra en el menu. Lo sentimos');
+  } else {
+    this.arrayPlatos.splice(index, 1);
+  }
 }
 ```
 
@@ -490,7 +528,6 @@ describe('Test clase Carta', () => {
   const quesillo = new Plato('Quesillo', [[huevo, 50], [azúcarBlanco, 150], [leche, 370], [lecheCondensada, 370]], 'POSTRE');
   
   const CartaRestauranteModerna = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
-
   describe('Es posible instanciar una Carta', () => {
     it('Instancia de la Carta.', () => {
       expect(CartaRestauranteModerna).to.exist;
@@ -623,6 +660,290 @@ quitarElemento(nombreElemento: string, cantidadMenu: number) {
 }
 ```
 
+Ahora entramos en la parte de **Inquirer**.
+
+En primer lugar tenemos `promptApp()`. Esta función es la encargada del menu principal del programa que recoge los valores posibles que puede ejecutar, estos valores son analizados en un switch para posteriormente realizar si queremos realizar una comanda, gestionar la alimentación o simplemente salir.
+
+```typescript
+export function promptApp(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'respuesta',
+    message: 'Seleccione una opcion:',
+    choices: Object.values(optionsApp)
+  }).then((answers: any) => {
+
+  switch (answers["respuesta"]) {
+    case optionsApp.Gestion:
+      break;
+    case optionsApp.Comanda:
+      ComandaRestaurante.runInquirer();
+      break;
+    case optionsApp.Salir:
+      console.log('Gracias por su visita. Buen dia');
+      break;
+    default:
+      console.log('Seleccione una opción valida');
+  }
+  }) 
+}
+```
+
+En cuanto a `promptcomanda()`. Esta función nos sirve para ejecutar el menu principal de todas las acciones relacionadas con comanda, aquí el usuario seleccionará la acción a realizar. Para esta función se hace uso de `inquirer.js` que es un modulo que permite la gestión de una línea de comando interactiva con el usuario. Basicamente especificamos en el atributo `type` el tipo de visualización que se busca, en nuestro caso seleccionamos una lista de acctiones por ello usamos el list.  con el atributo `message` visualizamos el mensaje que el usuario debe visualizar y con el comando `choices` le introducimos los diferentes valores recogidos en la variable `options` y en un switch posterior analizamos la opción que ha marcado el usuario y ejecutamos el coddigo correspondiente.
+
+```typescript
+promptComanda(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'respuesta',
+    message: 'Seleccione una opcion:',
+    choices: Object.values(options)
+  }).then((answers: any) => {
+
+  switch (answers["respuesta"]) {
+    case options.Visualizar:
+      this.promptVisualizar(); 
+      break;
+    case options.Comanda:
+      this.promptSecond()
+      break;
+    case options.Salir:
+      console.log('Gracias por su visita. Buen dia');
+      break;
+  }
+  }) 
+}
+```
+En caso de que el usuario seleccione la opción de visualizar, se accede al `PromptVisualizar` que nos preguntará que deseamos visualizar, si la carta de platos o si se desea visualizar los diferentes menús que tiene el restaurante, esta elección lo logramos gracias a un switch.
+
+```typescript
+promptVisualizar(){
+  inquirer.prompt([{
+    type: 'list',
+    name: 'eleccionVisualizar',
+    Message: 'Que desea ver:',
+    choices: Object.values(optionsVisualizar)
+  }]).then((respuesta: any) => {
+    switch (respuesta["eleccionVisualizar"]) {
+      case optionsVisualizar.Platos:
+        this.carta.getAllPlatosSueltos().forEach((item) => {
+          printPlato(item);
+        });
+        break;
+      case optionsVisualizar.Menus:
+        this.carta.getAllMenus().forEach((item) => {
+          printMenu(item);
+        });
+        break;
+      case optionsVisualizar.Volver:
+        this.promptComanda();
+        break;
+    }
+    inquirer.prompt({
+      type: 'confirm',
+      name: 'askAgain',
+      message: 'Quieres visualizar otros menus?',
+      default: true
+    }).then((answers: any) => {
+      if(answers.askAgain){
+        this.promptVisualizar();
+      } else {
+        this.promptComanda();
+      }
+    })
+  })
+}
+```
+
+Una vez en el menu principal si se seleccionea la opción que permite acceder a la comanda para pedir, modificar o eliminar platos, se redirige al `PromptSecond` esta función prompt nos preguntará cual acción de las comentadas con anterioridad queremos realizar. El switch que recoge la acción ejecutará el promptElegirMenu, el promptElegirPlatos o el promptCustomMenu. 
+
+```typescript
+ promptSecond(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'SegundaRespuesta',
+    Message: '¿Qué desea hacer ahora?',
+    choices: Object.values(SecondOption)
+  }).then((respuesta: any) => {
+    switch(respuesta["SegundaRespuesta"]){
+      case SecondOption.ElegirMenu:
+        this.promptElegirMenu();
+        break;
+      case SecondOption.ElegirPlatos:
+        this.promptElegirPlatos();
+        break;
+      case SecondOption.ModificarMenu:
+        this.promptCustomMenu();
+        break;
+      case SecondOption.FinalizarComanda:
+        console.log('Comanda ')
+        this.promptComanda();
+        break;
+    }
+  })
+}
+```
+
+En caso de que se seleccione el `promptElegirMenu` se muestra una lista con todos los menus disponibles y nos permitirá seleccionar uno y despues nos preguntará la cantidad que queremos consumir y si se quiere algún otro menú. Para ello uamos una variable que almacene la cantidad y el menu seleccionado.
+
+```typescript
+promptElegirMenu(){
+  let aux: string[] = [];
+  this.carta.getAllMenus().forEach(function(element) {
+    aux.push(element.getNombreMenu());
+  });
+  inquirer.prompt([{
+    type: 'list',
+    name: 'menuElegido',
+    Message: 'Menu a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros menus?',
+    default: true,
+  }]).then((respuesta: any) => {
+    this.sumarMenu(respuesta.menuElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' menu(s) << ' + respuesta.menuElegido + ' >>');
+    if(respuesta.askAgain){
+      this.promptElegirMenu()
+    } else {
+      this.promptSecond();
+    }
+  })
+}
+```
+
+En caso de seleccionar `promptElegirPlatos` que es la función que nos permite elegir los diferentes platos disponibles, este a través de una serie de variables y cálculos nos permite seleccionar el plato y añadir la cantidad del mismo.
+
+```typescript
+promptElegirPlatos(){
+  let aux: string[] = [];
+  this.carta.getAllPlatosSueltos().forEach(function(element) {
+    aux.push(element.getNombrePlato());
+  })
+
+  inquirer.prompt([{
+    type: 'list',
+    name: 'platoElegido',
+    Message: 'Plato a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros platos?',
+    default: true,
+  }]).then((respuesta: any) => {
+    this.sumarPlato(respuesta.platoElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' plato(s) << ' + respuesta.platoElegido + ' >>');
+    if(respuesta.askAgain){
+      this.promptElegirPlatos()
+    } else {
+      this.promptSecond();
+    }
+  })
+}
+```
+
+En caso de seleccionar en el segundo menú la opción de modificiar, llamamos a la funcion  `promptCustomMenu`que permitirá o modificar un menu ya existente añadiendo un nuevo plato a el o eliminar un plato de uno de los menus actuales. Esto se hace con lun puntero al array que guarda los diferentes menus y platos de forma que extraemos o introducimos un nuevo elemento
+
+```typescript
+promptCustomMenu(){
+  let aux: string[] = [];
+  this.carta.getAllMenus().forEach(function(element) {
+    aux.push(element.getNombreMenu());
+  });
+
+  inquirer.prompt([{
+    type: 'list',
+    name: 'menuElegido',
+    Message: 'Menu a modificar',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  }]).then((respuesta: any) => {
+    const menuAux = this.carta.searchMenu(respuesta.menuElegido);
+    let aux: string[] = [];
+    menuAux[0].getPlatos().forEach(function(element) {
+        aux.push(element.getNombrePlato());
+      }
+    );
+    inquirer.prompt([{
+      type: 'list',
+      name: 'eliminarPlatos',
+      Message: 'Plato a eliminar',
+      choices: Object.values(aux)
+    },
+  
+    ]).then((respuesta2: any) => {
+      const bye = menuAux[0].getPlatos().find(elemento => elemento.getNombrePlato() === respuesta2.eliminarPlatos)
+      if (bye instanceof Plato) {
+        menuAux[0].deletePlato(bye);
+      }
+      printMenu(menuAux[0]);
+    });
+
+    let aux2: string[] = [];
+    this.carta.getAllPlatosSueltos().forEach(function(element) {
+    aux2.push(element.getNombrePlato());
+    });
+
+    inquirer.prompt([{
+      type: 'list',
+      name: 'nuevoPlatos',
+      Message: 'Plato a añadir',
+      choices: Object.values(aux2)
+    }]).then((respuesta: any) => {
+      const hello = this.carta.getAllPlatosSueltos().find(elemento => elemento.getNombrePlato() === respuesta.nuevoPlatos)
+      if(hello instanceof Plato) {
+        console.log('##########################' + hello.getNombrePlato());
+        menuAux[0].addNuevoPlato(hello);
+      }
+      this.comanda.push(menuAux[0]);
+      console.log('Menu personalizado añadido');
+      printMenu(menuAux[0]);
+    });
+  });
+}
+```
+
+
+
+
+
 Por último, están los tests de la clase. Usamos los mismos objetos que para los tests `Carta`. Y en un principio hacemos las mismas comprobaciones: que se puede instanciar un objeto, que podemos añadir elementos (esta vez a la **comanda**) y que podemos eliminarlos también. 
 
 Para ello, hacemos uso de las funciones `sumarMenu()` y/o `sumarPlato()`, para después comprobar que se ha añadido correctamente consultando la longitud y los elementos del array. La última parte comprueba también el método `encontrarEnComanda()`, para lo cual deshacemos el guardián de tipos y comprobamos que el nombre del objeto es el esperado.
@@ -698,22 +1019,57 @@ describe('Test clase Comanda', () => {
 <br/><br/>
 
 ### 2.6. Fichero Main. <a name="id26"></a>
+El archivo `main.ts` es el fichero donde se ha implementado la funcionalidad principal del proyecto, es decir, la implementación del menú principal donde el usuario deberá seleccionar si desea realizar una comanda, gestionar la alimentación o salir del programa.
+La función principal del main esta recogida con inquirer, esta se explica en el apartado correspondiente, es la función `promptApp`.
 
 ```typescript
+export const inquirer = require('inquirer');
 
+enum optionsApp{
+  Comanda = "Realizar comanda",
+  Gestion = "Gestion alimentacion",
+  Salir = "Salir del programa"
+}
+
+export function promptApp(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'respuesta',
+    message: 'Seleccione una opcion:',
+    choices: Object.values(optionsApp)
+  }).then((answers: any) => {
+  switch (answers["respuesta"]) {
+    case optionsApp.Gestion:
+      break;
+    case optionsApp.Comanda:
+      ComandaRestaurante.runInquirer();
+      break;
+    case optionsApp.Salir:
+      console.log('Gracias por su visita. Buen dia');
+      break;
+    default:
+      console.log('Expulsado por gracioso');
+  }
+  }) 
+}
 ```
 
-```typescript
+<br/><br/>
 
-```
+### 2.7. Fichero Stock. <a name="id27"></a>
 
-```typescript
+El archivo `stock.ts` es el lugar donde hemos creados todos los objetos de todas las clases. Los 50 objetos de `Alimento`, los `Plato` y `Menu` están ahí, además de la **carta del restaurante**. 
 
-```
+Los hemos ubicado de esta manera para tener el código más organizado; pudiendo acceder a los objetos importantes simplemente con un `import`.
 
-```typescript
+<br/><br/>
 
-```
+### 2.8. Fichero BBDD. <a name="id28"></a>
+
+Este fichero **bbdd.ts** es el lugar donde se encuentra el código del módulo **lowdb** que nos permite trabajar con un fichero JSON donde almacenar datos como clases. 
+
+En él se encuentra parte del código que hemos intentado hacer funcionar, sin éxito. Lo dejamos como evidencia del intento.
 
 <br/><br/>
 
@@ -731,13 +1087,13 @@ Durante la creación de la clase `Comanda`, se nos planteó la duda de si un cli
 
 El fichero `bbdd.ts` es la parte que más problemas nos ha dado. Para todos no es nuevo trabajar con `inquirer` y `lowdb`, lo cual ha supuesto bastante prueba y error (de compilación) con los ejemplos que hemos seguido. 
 
-**AÑADIR MÁS COMPLICACIONES SI SURGEN**
+Al final hemos conseguido crear una estructura de menús con `inquirer`, con lo que nos quedamos satisfechos. Sin embargo, no hemos conseguido hacer funcionar el módulo **lowdb**. Hemos consultado la referencia del libro y ejemplos en internet. Entendemos su cometido, pero a nivel de código no lo hemos podido llevar a cabo. 
 
 <br/><br/>
 
 ## 4. Conclusión. <a name="id4"></a>
 
-Los objetivos que hemos cumplido satisfactoriamente sobre esta práctica han sido: crear una estructura de Menú usando los módulos Inquirer.js y Lowdb sobre un grupo de objetos en Typescript. ???
+Los objetivos que hemos cumplido satisfactoriamente sobre esta práctica han sido: crear una estructura de Menú usando los módulos Inquirer.js y Lowdb sobre un grupo de objetos en Typescript.
 
 Es decir, hemos aplicado un buen diseño de las clases solicitadas en el guión y respetando los principios SOLID. Con ello, conseguimos que la información que contiene cada clase esté bien ordenada y tenga sentido, en un entorno práctico.
 
@@ -745,9 +1101,9 @@ Hemos realizado las pruebas según la metodología TDD: primero creando las func
 
 Por último, ha sido nuestro primer contacto con **Inquirer.js** y **Lowdb**. Nos ha costado hacer que los ejemplos no den errores de compilación y que nuestras implementaciones funcionen correctamente.
 
-**Inquirer.js** nos ha enseñado a crear Menús intuitivos para el usuario...
+**Inquirer.js** nos ha enseñado a crear Menús intuitivos para el usuario, ofreciendo unas opciones fijas y muy claras para el usuario.
 
-**Lowdb** nos permite almacenar los datos de objetos en un fichero...
+**Lowdb** nos permite almacenar los datos de objetos en un fichero JSON para poder leer esos datos más adelante, incluso en otra ejecución desde cero del mismo programa.
 
 <br/><br/>
 

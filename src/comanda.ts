@@ -1,7 +1,9 @@
 import { Carta } from "./carta";
 import { Plato } from "./plato";
 import { Menu } from "./menu";
-import {promptMain} from './main';
+import { printPlato } from "./plato";
+import { printMenu } from "./menu";
+//import { promptMain } from './main';
 
 import * as readline from 'readline';
 export const inquirer = require('inquirer');
@@ -12,6 +14,18 @@ enum SecondOption{
   ElegirPlatos = "Seleccionar platos de la carta",
   ModificarMenu = "Personalizar un menu",
   FinalizarComanda = "Finalizar la comanda y volver al menu principal"
+}
+
+enum options{
+  Visualizar = "Visualizar la Carta",
+  Comanda = "Hacer comanda",
+  Salir = "Salir"
+}
+
+enum optionsVisualizar{
+  Platos = "Visualizar platos",
+  Menus = "Visualizar menus",
+  Volver = "Volver atras"
 }
 
 /**
@@ -191,14 +205,75 @@ export class Comanda {
         this.promptElegirPlatos();
         break;
       case SecondOption.ModificarMenu:
+        this.promptCustomMenu();
         break;
       case SecondOption.FinalizarComanda:
         console.log('Comanda ')
-        promptMain();
+        this.promptComanda();
         break;
     }
   })
 }
+
+/**
+ * Prompt de Inquirer para personalizar los menus
+ */
+ promptCustomMenu(){
+  let aux: string[] = [];
+  this.carta.getAllMenus().forEach(function(element) {
+    aux.push(element.getNombreMenu());
+  });
+
+  inquirer.prompt([{
+    type: 'list',
+    name: 'menuElegido',
+    Message: 'Menu a modificar',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  }]).then((respuesta: any) => {
+    const menuAux = this.carta.searchMenu(respuesta.menuElegido);
+    let aux: string[] = [];
+    menuAux[0].getPlatos().forEach(function(element) {
+        aux.push(element.getNombrePlato());
+    });
+    let aux2: string[] = [];
+      this.carta.getAllPlatosSueltos().forEach(function(element) {
+      aux2.push(element.getNombrePlato());
+    });
+    inquirer.prompt([{
+      type: 'list',
+      name: 'eliminarPlatos',
+      Message: 'Plato a eliminar',
+      choices: Object.values(aux)
+    },{
+      type: 'list',
+      name: 'nuevoPlatos',
+      Message: 'Plato a añadir',
+      choices: Object.values(aux2)
+    }]).then((respuesta2: any) => {
+      const bye = menuAux[0].getPlatos().find(elemento => elemento.getNombrePlato() === respuesta2.eliminarPlatos)
+      if (bye instanceof Plato) {
+        menuAux[0].deletePlato(bye);
+      }
+      const hello = this.carta.getAllPlatosSueltos().find(elemento => elemento.getNombrePlato() === respuesta2.nuevoPlatos)
+      if(hello instanceof Plato) {
+        menuAux[0].addNuevoPlato(hello);
+      }
+      this.comanda.push(menuAux[0]);
+      console.log('Menu personalizado añadido');
+    });
+  });
+}
+
 /**
  * Prompt de Inquirer para seleccionar los menus
  */
@@ -281,10 +356,78 @@ promptElegirPlatos(){
 }
 
 /**
+ * Prompt que nos permite visualizar lo que hay
+ */
+promptVisualizar(){
+  inquirer.prompt([{
+    type: 'list',
+    name: 'eleccionVisualizar',
+    Message: 'Que desea ver:',
+    choices: Object.values(optionsVisualizar)
+  }]).then((respuesta: any) => {
+    switch (respuesta["eleccionVisualizar"]) {
+      case optionsVisualizar.Platos:
+        this.carta.getAllPlatosSueltos().forEach((item) => {
+          printPlato(item);
+        });
+        break;
+      case optionsVisualizar.Menus:
+        this.carta.getAllMenus().forEach((item) => {
+          printMenu(item);
+        });
+        break;
+      case optionsVisualizar.Volver:
+        this.promptComanda();
+        break;
+    }
+      inquirer.prompt({
+        type: 'confirm',
+        name: 'askAgain',
+        message: 'Quieres visualizar otros menus?',
+        default: true
+      }).then((answers: any) => {
+        if(answers.askAgain){
+          this.promptVisualizar();
+        } else {
+          this.promptComanda();
+        }
+      }) 
+    
+  })
+}
+
+/**
+ * Prompt que interactua y da las opciones relacionadas con la comanda
+ */
+promptComanda(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'respuesta',
+    message: 'Seleccione una opcion:',
+    choices: Object.values(options)
+  }).then((answers: any) => {
+
+  switch (answers["respuesta"]) {
+    case options.Visualizar:
+      this.promptVisualizar(); 
+      break;
+    case options.Comanda:
+      this.promptSecond()
+      break;
+    case options.Salir:
+      console.log('Gracias por su visita. Buen dia');
+      break;
+  }
+
+  }) 
+}
+
+/**
  * Funcion que ejecuta el prompt de Inquirer correspondiente
  */
 runInquirer(): void {
-  this.promptSecond();
+  this.promptComanda();
 } 
   
 }

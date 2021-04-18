@@ -1,6 +1,6 @@
 # [DSI] Practica 07 - Modelo de datos de un sistema que permite el diseño de menus (prct07-menu-dataMode)
 
-**[Acceso a la Github Page]()**
+**[Acceso a la Github Page](https://ull-esit-inf-dsi-2021.github.io/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/../index)**
 
 * Universidad de La Laguna
 * Grado en Ingeniería Informática

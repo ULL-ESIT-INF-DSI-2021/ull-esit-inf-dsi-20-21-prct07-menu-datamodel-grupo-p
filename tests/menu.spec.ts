@@ -36,11 +36,5 @@ describe('Test clase Menú', () => {
       expect(MenuDelDia.getGruposAlimentos()).to.have.same.members(['HORTALIZAS', 'VERDURAS', 'LEGUMBRES', 'CARNES', 'CEREALES', 'HUEVOS', 'FRUTAS']);
       expect(MenuDelDia.getPrecioMenu()).to.be.at.least(0.5)
     });
-    /*it('Se añade un nuevo plato.',()=> {
-      expect(MenuDelDia.addNuevoPlato())
-
-    });*/
-
-
   });
 });

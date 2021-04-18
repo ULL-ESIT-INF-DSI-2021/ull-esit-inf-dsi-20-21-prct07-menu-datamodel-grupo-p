@@ -5,8 +5,8 @@
     "./src/carta.ts",
     "./src/comanda.ts",
     "./src/main.ts",
-    "./src/plato.ts"
-
+    "./src/plato.ts",
+    "./src/stock.ts"
   ],
-  "out": "./docs"
+  "out": "./docs/docum"
 }

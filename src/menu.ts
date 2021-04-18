@@ -2,6 +2,7 @@ import { Alimento } from "./alimento";
 import { Macronutrientes } from "./alimento"
 import { Grupo } from "./alimento";
 import { Plato } from "./plato";
+import { printPlato } from "./plato";
 import { Categoria } from "./plato";
 
 /*
@@ -111,7 +112,6 @@ export class Menu {
   }
 
   deletePlato(plato: Plato): void {
-    let pos: number = -1;
     let index = this.arrayPlatos.indexOf(plato);
     if(index == -1) {
       console.log('El plato no se encuentra en el menu. Lo sentimos');
@@ -119,4 +119,12 @@ export class Menu {
       this.arrayPlatos.splice(index, 1);
     }
   }
+}
+
+export function printMenu(menu: Menu): void {
+  console.log('Menu: ' + menu.getNombreMenu() + ' -- Precio: ' + +(menu.getPrecioMenu()).toFixed(2));
+  menu.getPlatos().forEach(function(element) {
+    console.log('------');
+    printPlato(element);
+  })
 }

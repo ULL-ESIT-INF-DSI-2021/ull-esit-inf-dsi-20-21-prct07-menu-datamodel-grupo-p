@@ -65,6 +65,36 @@ export class Plato {
     return this.precio;
   }
 
+
+  /**
+  * La funcion recibe el nuevo alimento a añadir y la cantidad e indexa
+  * este alimento nuevo en el array que contiene a todos los alimentos del menu/plato.
+  * 
+  * @param alimento alimento a añadir
+  */
+  addNuevoAlimento(nuevoAlimento: Alimento, cantidadAlimento: number) {
+    this.alimentos.push([nuevoAlimento, cantidadAlimento]);
+  }
+
+  /**
+   * La función recibe un elemento que debe eliminar del array de alimentos.
+   * Esta función tiene un fallo: no encuentra el objeto a eliminar el array, por lo 
+   * que el index es -1 y no hace nada. Hay que arreglarlo en posteriores versiones.
+   * 
+   * @param alimento alimento a eliminar
+   */
+  deleteAlimento(alimento: Alimento): void {
+    if (this.alimentos[0] instanceof Alimento) {
+      let index = this.alimentos[0].indexOf(alimento);
+      console.log(index);
+      if (index > - 1) {
+        this.alimentos.splice(index, 1);
+      } else {
+        console.log('El plato no se encuentra en el menu. Lo sentimos');
+      }
+    }
+  }
+
   /**
    * Realiza el cálculo de los macronutrientes del plato en base a la cantidad de cada alimento.
    * @returns Macronutrientes del plato.
@@ -206,4 +236,21 @@ export class Plato {
     let arrayGrupos: string[] = ['CARNES', 'PESCADOS', 'HUEVOS', 'TOFU', 'FRUTOS_SECOS', 'SEMILLAS', 'LEGUMBRES', 'VERDURAS', 'HORTALIZAS', 'LACTEOS', 'CEREALES', 'FRUTAS', 'PROCESADOS'];
     return arrayGrupos[posicion];
   }
+}
+
+export function printPlato(plato: Plato): void {
+  console.log('Plato: ' + plato.getNombrePlato());
+  let ingredientes_aux: string = '';
+  plato.getAlimentos().forEach(function(element) {
+    ingredientes_aux += element[0].getNombreAlimento() + ', ';
+  });
+  let macros_aux: string = '';
+  macros_aux += 'Carbohidratos: ' + +(
+  plato.getMacronutrientesPlato().carbohidratos).toFixed(3);
+  macros_aux += ' - Lipidos: ' + +(plato.getMacronutrientesPlato().lipidos).toFixed(3);
+  macros_aux += ' - Proteinas: ' + +(plato.getMacronutrientesPlato().proteinas).toFixed(3);
+  console.log('Ingredientes: ' +  ingredientes_aux);
+  console.log('Composición nutricional: ' + macros_aux);
+  console.log('Grupo de alimentos: ' + plato.calculoGrupoPredominante());
+  console.log('Precio unitario del plato: ' + +(plato.getPrecio()).toFixed(2));
 }
