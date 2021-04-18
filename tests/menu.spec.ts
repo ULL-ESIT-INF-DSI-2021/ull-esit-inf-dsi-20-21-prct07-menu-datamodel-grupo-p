@@ -17,7 +17,8 @@ describe('Test clase Menú', () => {
   const chorizo = new Alimento('Chorizo', 11, 'Asturias', 285, {carbohidratos: 2, proteinas: 22, lipidos: 21}, 'CARNES');
   const lentejas = new Alimento('Lentejas cocidas', 1.49, 'España', 103, {carbohidratos: 12.5, proteinas: 8.2, lipidos: 0.5}, 'LEGUMBRES');
   const potajeDeLentejas = new Plato('Potaje de lentejas', [[lentejas, 50], [papasArrugadas, 30], [chorizo, 10], [cilantro, 5]], 'PRIMERO');
-  
+
+
   describe('Es posible instanciar un menú', () => {
     const MenuDelDia = new Menu('Menú del día', papasConMojo, potajeDeLentejas, arrozCubana);
     it('Instancia del Menú', () => {
@@ -35,5 +36,11 @@ describe('Test clase Menú', () => {
       expect(MenuDelDia.getGruposAlimentos()).to.have.same.members(['HORTALIZAS', 'VERDURAS', 'LEGUMBRES', 'CARNES', 'CEREALES', 'HUEVOS', 'FRUTAS']);
       expect(MenuDelDia.getPrecioMenu()).to.be.at.least(0.5)
     });
+    /*it('Se añade un nuevo plato.',()=> {
+      expect(MenuDelDia.addNuevoPlato())
+
+    });*/
+
+
   });
 });

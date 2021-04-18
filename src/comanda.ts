@@ -1,7 +1,18 @@
 import { Carta } from "./carta";
 import { Plato } from "./plato";
 import { Menu } from "./menu";
+import {promptMain} from './main';
+
 import * as readline from 'readline';
+export const inquirer = require('inquirer');
+
+
+enum SecondOption{
+  ElegirMenu = "Seleccionar menu de la carta",
+  ElegirPlatos = "Seleccionar platos de la carta",
+  ModificarMenu = "Personalizar un menu",
+  FinalizarComanda = "Finalizar la comanda y volver al menu principal"
+}
 
 /**
  * Esta es la clase Comanda. 
@@ -11,8 +22,9 @@ export class Comanda {
    * Constructor de la clase Comanda.    arrzo 
    * @param comanda Es un array dond
    */
-  private comanda: (Menu|Plato)[] = [];
-  constructor(public readonly carta: Carta) {
+  protected comanda: (Menu|Plato)[] = [];
+  protected itemMap = new Map<number, (Menu|Plato)>();  // Posible cambio de formato para ajustarse más al ejemplo.
+  constructor(public readonly carta: Carta, numeroComanda: number) {
   }
 
   /**
@@ -157,4 +169,122 @@ export class Comanda {
       }
     });
   }
+// --- --- --- --- --- --- ---
+// ----- INQUIRER THINGS -----
+/**
+ * Prompt de Inquirer para realizar la comanda.
+ * Permite añadir plato, menu, modificar menu.
+ */
+  promptSecond(){
+  console.clear();
+  inquirer.prompt({
+    type: 'list',
+    name: 'SegundaRespuesta',
+    Message: '¿Qué desea hacer ahora?',
+    choices: Object.values(SecondOption)
+  }).then((respuesta: any) => {
+    switch(respuesta["SegundaRespuesta"]){
+      case SecondOption.ElegirMenu:
+        this.promptElegirMenu();
+        break;
+      case SecondOption.ElegirPlatos:
+        this.promptElegirPlatos();
+        break;
+      case SecondOption.ModificarMenu:
+        break;
+      case SecondOption.FinalizarComanda:
+        console.log('Comanda ')
+        promptMain();
+        break;
+    }
+  })
+}
+/**
+ * Prompt de Inquirer para seleccionar los menus
+ */
+promptElegirMenu(){
+  let aux: string[] = [];
+  this.carta.getAllMenus().forEach(function(element) {
+    aux.push(element.getNombreMenu());
+  });
+  inquirer.prompt([{
+    type: 'list',
+    name: 'menuElegido',
+    Message: 'Menu a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros menus?',
+    default: true,
+  }]).then((respuesta: any) => {
+    this.sumarMenu(respuesta.menuElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' menu(s) << ' + respuesta.menuElegido + ' >>');
+    if(respuesta.askAgain){
+      this.promptElegirMenu()
+    } else {
+      this.promptSecond();
+    }
+  })
+}
+
+/**
+ * Prompt de Inquirer para seleccionar los platos a elegir
+ */
+promptElegirPlatos(){
+  let aux: string[] = [];
+  this.carta.getAllPlatosSueltos().forEach(function(element) {
+    aux.push(element.getNombrePlato());
+  })
+
+  inquirer.prompt([{
+    type: 'list',
+    name: 'platoElegido',
+    Message: 'Plato a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros platos?',
+    default: true,
+  }]).then((respuesta: any) => {
+    this.sumarPlato(respuesta.platoElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' plato(s) << ' + respuesta.platoElegido + ' >>');
+    if(respuesta.askAgain){
+      this.promptElegirPlatos()
+    } else {
+      this.promptSecond();
+    }
+  })
+}
+
+/**
+ * Funcion que ejecuta el prompt de Inquirer correspondiente
+ */
+runInquirer(): void {
+  this.promptSecond();
+} 
+  
 }

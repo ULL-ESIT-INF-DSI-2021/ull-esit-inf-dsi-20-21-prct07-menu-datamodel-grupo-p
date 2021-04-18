@@ -43,13 +43,13 @@ describe('Test clase Comanda', () => {
   const quesillo = new Plato('Quesillo', [[huevo, 50], [azúcarBlanco, 150], [leche, 370], [lecheCondensada, 370]], 'POSTRE');
   
   const CartaRestauranteLunaRosa = new Carta('Carta Restaurante Moderna', [MenuDelDia, MenuVegetariano], [quesillo]);
-  const ComandaRestaurante = new Comanda(CartaRestauranteLunaRosa); 
+  const ComandaRestaurante = new Comanda(CartaRestauranteLunaRosa, 1); 
   describe('Es posible instanciar un alimento', () => {
     it('Instancia de la comanda.', () => {
       expect(ComandaRestaurante).to.exist;
     });
     it('Instancia de Comanda no es nula.', () => {
-      expect(new Comanda(CartaRestauranteLunaRosa)).not.null;
+      expect(new Comanda(CartaRestauranteLunaRosa, 1)).not.null;
     });
   });
   describe('Los métodos que modifican la comanda funcionan correctamente.', () => {

@@ -105,4 +105,18 @@ export class Menu {
     });
     return precioTotal;
   }
+
+  addNuevoPlato(plato: Plato): void {
+    this.arrayPlatos.push(plato);
+  }
+
+  deletePlato(plato: Plato): void {
+    let pos: number = -1;
+    let index = this.arrayPlatos.indexOf(plato);
+    if(index == -1) {
+      console.log('El plato no se encuentra en el menu. Lo sentimos');
+    } else {
+      this.arrayPlatos.splice(index, 1);
+    }
+  }
 }

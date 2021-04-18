@@ -13,7 +13,7 @@
   * Óscar Ignacio Pozo Fernandez - alu0101036526@ull.edu.es
   * Eduardo Da Silva Yanes - alu0101104911@ull.edu.es
   * Joel Francisco Escobar Socas - alu0101130408@ull.edu.es
-  * Andrés Concepción 
+  * Andrés Concepción Afonso - alu0100600216@ull.edu.es
 
 <br/><br/>
 
@@ -522,7 +522,7 @@ describe('Test clase Carta', () => {
 <br/><br/>
 
 ### 2.5. Clase Comanda. <a name="id25"></a>
-Casi en lo más alto de la jerarquía se encuentra la clase `Comanda`. Esta clase es la que almacena todos los elementos que el cliente desee pedir. Todo esos elementos provienen del objeto `Carta` que se recibe al instanciar el objeto. También, cada comanda recibe una `comandaID` para simular el número del pedido de cada cliente, y además tener así un identificador.
+Casi en lo más alto de la jerarquía se encuentra la clase `Comanda`. Esta clase es la que almacena todos los elementos que el cliente desee pedir. Todo esos elementos provienen del objeto `Carta` que se recibe al instanciar el objeto. También, cada comanda recibe una `idComanda` para simular el número del pedido de cada cliente, y además tener así un identificador.
 
 El único método sencillo es `mostrarComanda()`, que devuelve todos los elementos que el cliente haya decidido añadir a su comanda hasta el momento.
 
@@ -533,7 +533,9 @@ export class Comanda {
    * @param carta Objeto Carta de la que consultar los Menús/Platos.
    */
   private comanda: (Menu|Plato)[] = [];
-  constructor(public readonly carta: Carta, public readonly comandaID: number) {
+  protected idComanda: number;
+  constructor(public readonly carta: Carta, numeroComanda: number) {
+    this.idComanda = numeroComanda;
   }
   mostrarComanda() {
     return this.comanda;
