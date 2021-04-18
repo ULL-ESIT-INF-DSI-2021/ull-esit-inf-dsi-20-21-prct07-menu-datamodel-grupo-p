@@ -1,10 +1,4 @@
-
-
-# DESARROLLO DE SISTEMAS INFORMÁTICOS
-
-<br/><br/>
-
-## Práctica 7 - Modelo de datos de un sistema que permite el diseño de menús.
+# Práctica 7 - Modelo de datos de un sistema que permite el diseño de menús.
 
 <br/><br/>
 
@@ -20,7 +14,9 @@
 ### Índice:
 
 1. [Introducción y objetivos.](#id1)
+
 2. [Ejercicio.](#id2)
+      
       2.1. [Clase Alimentos.](#id21)
 
       2.2. [Clase Platos.](#id22)
@@ -34,8 +30,11 @@
       2.6. [Fichero Main.](#id26)
 
       2.7 [Fichero Stock.](#id27)
+
 4. [Dificultades.](#id3)
+
 5. [Conclusión.](#id4)
+
 6. [Referencias.](#id5)
 
 <br/><br/>
@@ -48,6 +47,11 @@ Otra parte importante del desarrollo es crear una base de datos usando los módu
 <br/><br/>
 
 ## 2. Ejercicio. <a name="id2"></a>
+
+**[Enlace a la documentación generada con TYPEDOC](https://ull-esit-inf-dsi-2021.github.io/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/docum/index.html)**
+
+**[Enlace al código fuente](https://github.com/ULL-ESIT-INF-DSI-2021/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/tree/master/src)**
+
 ### 2.1. Clase Alimento. <a name="id21"></a>
 Lo primero y más claro de implementar para esta práctica es la clase `Alimento`. Su cometido es tener los datos más importantes de los elementos que forman los diferentes platos. Algunos de estos datos son: el precio, origen, calorías, grupo, etc.
 
