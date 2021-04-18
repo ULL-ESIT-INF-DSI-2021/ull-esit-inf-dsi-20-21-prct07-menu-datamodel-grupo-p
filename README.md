@@ -4,7 +4,7 @@
 
 [![Tests](https://github.com/ULL-ESIT-INF-DSI-2021/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/actions/workflows/node.js.yml/badge.svg?branch=master)](https://github.com/ULL-ESIT-INF-DSI-2021/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/actions/workflows/node.js.yml)
 
-**[Acceso a la Github Page](https://ull-esit-inf-dsi-2021.github.io/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p/../index)**
+**[Acceso a la Github Page](https://ull-esit-inf-dsi-2021.github.io/ull-esit-inf-dsi-20-21-prct07-menu-datamodel-grupo-p)**
 
 * Universidad de La Laguna
 * Grado en Ingeniería Informática
