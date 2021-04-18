@@ -63,7 +63,7 @@ function printPlato(plato: Plato): void {
 }
 
 function printMenu(menu: Menu): void {
-  console.log('Menu: ' + menu.getNombreMenu() + ' -- Precio: ' + menu.getPrecioMenu());
+  console.log('Menu: ' + menu.getNombreMenu() + ' -- Precio: ' + +(menu.getPrecioMenu()).toFixed(2));
   menu.getPlatos().forEach(function(element) {
     console.log('------');
     printPlato(element);
@@ -83,11 +83,115 @@ enum options{
 
 // Hacemos otro enum para el segundo menu
 enum SecondOption{
-  ElegirMenu = "Elegir una comanda del menu",
-  CrearMenu = "Crear un menú personalizado en base a la carta",
-  ModificarMenu = "Modificar uno de los menus",
-  FinalizarComanda = "Finalizar la comanda"
+  ElegirMenu = "Seleccionar menu de la carta",
+  ElegirPlatos = "Seleccionar platos de la carta",
+  ModificarMenu = "Personalizar un menu",
+  FinalizarComanda = "Finalizar la comanda y volver al menu principal"
 }
+
+
+
+export function promptElegirMenu(){
+  let aux: string[] = [];
+  CartaRestauranteLunaRosa.getAllMenus().forEach(function(element) {
+    aux.push(element.getNombreMenu());
+  })
+
+  /*const prompt = [
+    {
+      type: 'recursive',
+      message: 'Añadir nuevo menu',
+      name: 'menus',
+      prompts: [
+        {
+          type: 'list',
+          name: 'menuElegido',
+          message: 'Menu a elegir',
+          choices: Object.values(aux)
+        },
+        {
+          type: 'input',
+          name: 'cantidad',
+          Message: 'Cuantos desea',
+          validate: function (value) {
+            var valid = !isNaN(parseFloat(value));
+            return valid || 'Please enter a number';
+          },
+          filter: Number,
+        },
+      ]
+    }];*/
+  
+  inquirer.prompt([{
+    type: 'list',
+    name: 'menuElegido',
+    Message: 'Menu a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros menus?',
+    default: true,
+  }]).then((respuesta: any) => {
+    ComandaRestaurante.sumarMenu(respuesta.menuElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' menu(s) << ' + respuesta.menuElegido + ' >>');
+    if(respuesta.askAgain){
+      promptElegirMenu()
+    } else {
+      promptSecond();
+    }
+  })
+}
+
+export function promptElegirPlatos(){
+  let aux: string[] = [];
+  CartaRestauranteLunaRosa.getAllPlatosSueltos().forEach(function(element) {
+    aux.push(element.getNombrePlato());
+  })
+
+  inquirer.prompt([{
+    type: 'list',
+    name: 'platoElegido',
+    Message: 'Plato a elegir',
+    choices: Object.values(aux)
+  },
+  {
+    type: 'input',
+    name: 'cantidad',
+    Message: 'Cuantos desea',
+    validate: function (value) {
+      var valid = !isNaN(parseFloat(value));
+      return valid || 'Please enter a number';
+    },
+    filter: Number,
+  },
+  {
+    type: 'confirm',
+    name: 'askAgain',
+    message: 'Quieres continuar añadiendo otros platos?',
+    default: true,
+  }]).then((respuesta: any) => {
+    ComandaRestaurante.sumarPlato(respuesta.platoElegido, respuesta.cantidad);
+    console.log('Añadido(s) ' + respuesta.cantidad + ' plato(s) << ' + respuesta.platoElegido + ' >>');
+    if(respuesta.askAgain){
+      promptElegirMenu()
+    } else {
+      promptSecond();
+    }
+  })
+}
+
 
 //Segundo Menu para el caso de  Comandas
 export function promptSecond(){
@@ -100,44 +204,101 @@ export function promptSecond(){
   }).then((respuesta: any) => {
     switch(respuesta["SegundaRespuesta"]){
       case SecondOption.ElegirMenu:
+        promptElegirMenu();
         break;
-      case SecondOption.CrearMenu:
+      case SecondOption.ElegirPlatos:
+        promptElegirPlatos();
         break;
       case SecondOption.ModificarMenu:
+        break;
+      case SecondOption.FinalizarComanda:
+        console.log('Comanda ')
+        promptComanda();
         break;
     }
   })
 }
   
-// Funcion principal del menu 
+/*// Funcion principal del menu 
+const keypress = async () => {
+  process.stdin.setRawMode(true)
+  return new Promise(resolve => process.stdin.once('data', data => {
+    const byteArray = [...data]
+    if (byteArray.length > 0 && byteArray[0] === 3) {
+      console.log('^C')
+      process.exit(1)
+    }
+    process.stdin.setRawMode(false)
+    //resolve();
+  }))
+}*/
+
 export function promptComanda(){
   console.clear();
-  //seria necesario el async si quisieramos ejecutar algo aqui a parte como la visualizacion de algo
+  /*//seria necesario el async si quisieramos ejecutar algo aqui a parte como la visualizacion de algo
+  const promptComanda1 = [
+    {
+      type: 'list',
+      name: 'respuesta',
+      message: 'Seleccione una opcion:',
+      choices: Object.values(options)
+    }
+  
+  ];
+  const promptComanda1_accion = (answers: any) => {
+    switch (answers["respuesta"]) {
+      case options.Visualizar:
+        //Llamada a un funcion que devuelva la carta del restaurante 
+        //let miCarta = new Carta(nombre,todos los menus de la carta, platos sueltos);
+        //console.table("Carta -- " + CartaRestauranteLunaRosa.getAllMenus()[0].getPlatos());
+        printMenu(CartaRestauranteLunaRosa.getAllMenus()[0]);
+        break;
+      case options.Comanda:
+        //Aqui va la funcion que ejecuta un menu interno que permite modificar o seleccionar un menu personalizado
+        promptSecond();
+        break;
+      case options.Salir:
+        //Para salir una idea es matar el propio proceso que se esta ejecutando
+        process.exit(0);
+        break;
+    }
+  };
+  inquirer.prompt({
+    type: 'recursive',
+    message: ''
+
+  })*/
+
   inquirer.prompt({
     type: 'list',
     name: 'respuesta',
     message: 'Seleccione una opcion:',
     choices: Object.values(options)
   }).then((answers: any) => {
-  
+
   switch (answers["respuesta"]) {
     case options.Visualizar:
       //Llamada a un funcion que devuelva la carta del restaurante 
       //let miCarta = new Carta(nombre,todos los menus de la carta, platos sueltos);
       //console.table("Carta -- " + CartaRestauranteLunaRosa.getAllMenus()[0].getPlatos());
       printMenu(CartaRestauranteLunaRosa.getAllMenus()[0]);
+      console.log("Press any key to go back to main menu");
+      //await keypress();
+      promptComanda();
       break;
     case options.Comanda:
       //Aqui va la funcion que ejecuta un menu interno que permite modificar o seleccionar un menu personalizado
       promptSecond();
       break;
     case options.Salir:
-      //salimos
+      //Una idea es hacer un DO WHILE y otra es matar el proceso actual en este punto
+      process.exit(0);
       break;
   }
-  
-  })
+
+  }) 
 }
+
 
 
 promptComanda();
